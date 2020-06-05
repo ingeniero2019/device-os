@@ -360,7 +360,7 @@ void HAL_I2C_Begin(HAL_I2C_Interface i2c, I2C_Mode mode, uint8_t address, void* 
      * We cannot enable both of them at the same time.
      */
     if (i2c == HAL_I2C_INTERFACE3) {
-        if (HAL_USART_Is_Enabled(HAL_USART_SERIAL1)) {
+        if (hal_usart_is_enabled(HAL_USART_SERIAL1)) {
             // Unfortunately we cannot return an error code here
             HAL_I2C_Release(i2c, nullptr);
             return;
