@@ -341,6 +341,7 @@ int SaraNcpClient::off() {
         // FIXME: else there is power leakage still.
     }
 
+    parser_.destroy();
     // Disable the UART interface.
     LOG(TRACE, "Deinit modem serial.");
     serial_.reset();
@@ -1658,7 +1659,7 @@ int SaraNcpClient::modemPowerOn() {
     // The serial_ is always released if powering down the modem is requested.
     if (!serial_.get()) {
         serial_.reset(new (std::nothrow) SerialStream(HAL_USART_SERIAL2, UBLOX_NCP_DEFAULT_SERIAL_BAUDRATE, SERIAL_8N1 | SERIAL_FLOW_CONTROL_RTS_CTS));
-        CHECK_TRUE(serial_.get(), SYSTEM_ERROR_NO_MEMORY);
+        CHECK_TRUE(serial_, SYSTEM_ERROR_NO_MEMORY);
         CHECK(initParser(serial_.get()));
     }
 
@@ -1830,6 +1831,7 @@ int SaraNcpClient::modemHardReset(bool powerOff) {
             return modemPowerOn();
         } else {
             ncpPowerState(NcpPowerState::OFF);
+            parser_.destroy();
             // Disable the UART interface.
             LOG(TRACE, "Deinit modem serial.");
             serial_.reset();
