@@ -10,11 +10,11 @@ static uint8_t* tempBuf1 = nullptr;
 
 using particle::__SPISettings;
 
-static void querySpiInfo(HAL_SPI_Interface spi, hal_spi_info_t* info)
+static void querySpiInfo(hal_spi_interface_t spi, hal_spi_info_t* info)
 {
   memset(info, 0, sizeof(hal_spi_info_t));
   info->version = HAL_SPI_INFO_VERSION_1;
-  HAL_SPI_Info(spi, info, nullptr);
+  hal_spi_info(spi, info, nullptr);
 }
 
 static __SPISettings spiSettingsFromSpiInfo(hal_spi_info_t* info)
@@ -24,7 +24,7 @@ static __SPISettings spiSettingsFromSpiInfo(hal_spi_info_t* info)
   return __SPISettings(info->clock, info->bit_order, info->data_mode);
 }
 
-static bool spiSettingsApplyCheck(SPIClass& spi, const __SPISettings& settings, HAL_SPI_Interface interface = HAL_SPI_INTERFACE1)
+static bool spiSettingsApplyCheck(SPIClass& spi, const __SPISettings& settings, hal_spi_interface_t interface = HAL_SPI_INTERFACE1)
 {
     hal_spi_info_t info;
     spi.beginTransaction(settings);

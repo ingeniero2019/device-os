@@ -139,7 +139,7 @@ private:
 // make sure to update spark_wiring_spi_proxy.h and wiring/api SPI tests to reflect these changes.
 class SPIClass {
 private:
-  HAL_SPI_Interface _spi;
+  hal_spi_interface_t _spi;
 
   /**
    * \brief Divider Reference Clock
@@ -159,7 +159,7 @@ private:
 #endif
 
 public:
-  SPIClass(HAL_SPI_Interface spi);
+  SPIClass(hal_spi_interface_t spi);
   ~SPIClass() = default;
 
   // Prevent copying
@@ -168,7 +168,7 @@ public:
 
   void begin();
   void begin(uint16_t);
-  void begin(SPI_Mode mode, uint16_t ss_pin = SPI_DEFAULT_SS);
+  void begin(hal_spi_mode_t mode, uint16_t ss_pin = SPI_DEFAULT_SS);
   void end();
 
   void setBitOrder(uint8_t);
@@ -231,12 +231,12 @@ public:
   bool trylock()
   {
 #if HAL_PLATFORM_SPI_HAL_THREAD_SAFETY
-    HAL_SPI_AcquireConfig conf = {
+    hal_spi_acquire_config_t conf = {
       .size = sizeof(conf),
       .version = 0,
       .timeout = 0
     };
-    return HAL_SPI_Acquire(_spi, &conf) == SYSTEM_ERROR_NONE;
+    return hal_spi_acquire(_spi, &conf) == SYSTEM_ERROR_NONE;
 #elif PLATFORM_THREADING
     return _mutex.trylock();
 #else
@@ -247,7 +247,7 @@ public:
   int lock()
   {
 #if HAL_PLATFORM_SPI_HAL_THREAD_SAFETY
-    return HAL_SPI_Acquire(_spi, nullptr);
+    return hal_spi_acquire(_spi, nullptr);
 #elif PLATFORM_THREADING
     _mutex.lock();
     return 0;
@@ -259,7 +259,7 @@ public:
   void unlock()
   {
 #if HAL_PLATFORM_SPI_HAL_THREAD_SAFETY
-    HAL_SPI_Release(_spi, nullptr);
+    hal_spi_release(_spi, nullptr);
 #elif PLATFORM_THREADING
     _mutex.unlock();
 #endif
