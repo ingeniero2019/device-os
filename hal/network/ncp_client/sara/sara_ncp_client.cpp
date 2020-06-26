@@ -343,7 +343,7 @@ int SaraNcpClient::off() {
 
     // Disable the UART interface.
     LOG(TRACE, "Deinit modem serial.");
-    serial_.on(false);
+    serial_->on(false);
 
     ready_ = false;
     ncpState(NcpState::OFF);
@@ -1639,8 +1639,8 @@ bool SaraNcpClient::waitModemPowerState(bool onOff, system_tick_t timeout) const
 }
 
 int SaraNcpClient::modemPowerOn() {
-    if (!serial_.on()) {
-        CHECK(serial_.on(true));
+    if (!serial_->on()) {
+        CHECK(serial_->on(true));
     }
     if (!modemPowerState()) {
         ncpPowerState(NcpPowerState::TRANSIENT_ON);
@@ -1810,7 +1810,7 @@ int SaraNcpClient::modemHardReset(bool powerOff) {
             ncpPowerState(NcpPowerState::OFF);
             // Disable the UART interface.
             LOG(TRACE, "Deinit modem serial.");
-            serial_.on(false);
+            serial_->on(false);
         }
     }
     return SYSTEM_ERROR_NONE;
