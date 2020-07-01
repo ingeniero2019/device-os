@@ -59,6 +59,7 @@ SerialStream::SerialStream(hal_usart_interface_t serial, uint32_t baudrate, uint
     c.tx_buffer_size = txBufferSize;
     hal_usart_init_ex(serial_, &c, nullptr);
     hal_usart_begin_config(serial_, baudrate, config, 0);
+    phyOn_ = true;
 }
 
 SerialStream::~SerialStream() {
@@ -151,7 +152,9 @@ int SerialStream::setBaudRate(unsigned int baudrate) {
         return SYSTEM_ERROR_INVALID_STATE;
     }
     hal_usart_end(serial_);
+    phyOn_ = false;
     hal_usart_begin_config(serial_, baudrate, config_, 0);
+    phyOn_ = true;
     return 0;
 }
 
