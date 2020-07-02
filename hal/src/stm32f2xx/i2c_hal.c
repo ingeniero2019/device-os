@@ -157,7 +157,13 @@ STM32_I2C_Info I2C_MAP[TOTAL_I2C] =
 #endif
 };
 
-static STM32_I2C_Info *i2cMap[TOTAL_I2C]; // pointer to I2C_MAP[] containing I2C peripheral info
+static STM32_I2C_Info *i2cMap[TOTAL_I2C] = { // pointer to I2C_MAP[] containing I2C peripheral info
+    &I2C_MAP[I2C1_D0_D1]
+#if PLATFORM_ID == PLATFORM_ELECTRON_PRODUCTION // Electron
+   ,&I2C_MAP[I2C3_C4_C5]
+   ,&I2C_MAP[I2C3_PM_SDA_SCL]
+#endif
+};
 
 /* Extern variables ----------------------------------------------------------*/
 
@@ -235,22 +241,7 @@ static bool HAL_I2C_Buffers_Initialized(HAL_I2C_Interface i2c) {
 
 int HAL_I2C_Init(HAL_I2C_Interface i2c, const HAL_I2C_Config* config)
 {
-    if(i2c == HAL_I2C_INTERFACE1)
-    {
-        i2cMap[i2c] = &I2C_MAP[I2C1_D0_D1];
-    }
 #if PLATFORM_ID == PLATFORM_ELECTRON_PRODUCTION // Electron
-    if(i2c == HAL_I2C_INTERFACE2 || i2c == HAL_I2C_INTERFACE1)
-    {
-        // these are co-dependent so initialize both
-        i2cMap[HAL_I2C_INTERFACE1] = &I2C_MAP[I2C1_D0_D1];
-        i2cMap[HAL_I2C_INTERFACE2] = &I2C_MAP[I2C3_C4_C5];
-    }
-    else if(i2c == HAL_I2C_INTERFACE3)
-    {
-        i2cMap[i2c] = &I2C_MAP[I2C3_PM_SDA_SCL];
-    }
-
     // For now we only enable this for PMIC I2C bus
     if (i2c == HAL_I2C_INTERFACE3) {
         os_thread_scheduling(false, NULL);
@@ -434,6 +425,7 @@ void HAL_I2C_End(HAL_I2C_Interface i2c, void* reserved)
     if(i2cMap[i2c]->state != HAL_I2C_STATE_DISABLED)
     {
         I2C_Cmd(i2cMap[i2c]->I2C_Peripheral, DISABLE);
+        I2C_DeInit(i2cMap[i2c]->I2C_Peripheral);
         i2cMap[i2c]->state = HAL_I2C_STATE_DISABLED;
     }
     HAL_I2C_Release(i2c, NULL);
