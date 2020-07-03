@@ -709,11 +709,7 @@ static int enterUltraLowPowerMode(const hal_sleep_config_t* config, hal_wakeup_s
     // Suspend all GPIOTE interrupts
     HAL_Interrupts_Suspend();
 
-    // HAL_Pin_Mode(24, PIN_MODE_NONE);
-    // HAL_Pin_Mode(27, PIN_MODE_NONE);
-
-    // _Attempt_ to disable HFCLK. This may not succeed, resulting in a higher current consumption
-    // FIXME
+    // Disable HFCLK.
     bool hfclkResume = false;
     if (nrf_drv_clock_hfclk_is_running()) {
         hfclkResume = true;
