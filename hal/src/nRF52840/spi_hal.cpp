@@ -471,6 +471,9 @@ void hal_spi_transfer_dma(hal_spi_interface_t spi, void* tx_buffer, void* rx_buf
 }
 
 void hal_spi_transfer_dma_cancel(hal_spi_interface_t spi) {
+    if (!spiMap[spi].transmitting) {
+        return;
+    }
     if (spiMap[spi].spi_mode == SPI_MODE_MASTER) {
         spiTransferCancel(spi);
         spiMap[spi].transmitting = false;
