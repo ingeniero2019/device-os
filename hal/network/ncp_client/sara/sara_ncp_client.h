@@ -85,9 +85,11 @@ private:
     CellularAccessTechnology act_ = CellularAccessTechnology::NONE;
 
     enum class RegistrationState {
-        NotRegistered = 0,
-        Registered    = 1,
-        NotRegistering = 2
+        NotRegistering = 0,
+        Registered = 1,
+        Registering = 2,
+        Denied = 3,
+        Unknown = 4
     };
 
     enum class ModemState {
@@ -97,9 +99,9 @@ private:
         DefaultBaudrate = 3
     };
 
-    RegistrationState creg_ = RegistrationState::NotRegistered;
-    RegistrationState cgreg_ = RegistrationState::NotRegistered;
-    RegistrationState cereg_ = RegistrationState::NotRegistered;
+    RegistrationState creg_ = RegistrationState::Unknown;
+    RegistrationState cgreg_ = RegistrationState::Unknown;
+    RegistrationState cereg_ = RegistrationState::Unknown;
     system_tick_t regStartTime_;
     system_tick_t regCheckTime_;
     system_tick_t registeredTime_;
@@ -143,6 +145,7 @@ private:
     void waitForPowerOff();
     int getAppFirmwareVersion();
     int waitAtResponseFromPowerOn(ModemState& modemState);
+    static RegistrationState parseCregResponse(int v);
 };
 
 inline AtParser* SaraNcpClient::atParser() {
